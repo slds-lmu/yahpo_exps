@@ -28,12 +28,12 @@ map_chunked = function(all, fct, chunks = 10L) {
 save_rds = function(lstix, i) {
   lstx = map(lstix, function(lst) {
     x = data.table(lst$performances)
-
+    
     # Get rid of failed runs
     nas = apply(x[, intersect(metrics, colnames(x)), with = FALSE], 1, function(x) mean(is.na(x)))
     x = x[nas < 0.5,]
     if (all(is.na(x$trainsize))) return(NULL)
-
+    
     # Convert columns
     x[, trainsize := round(trainsize / max(trainsize, na.rm = TRUE),2)]
     x[, repl := as.factor(seq_along(iter)), by = trainsize]
@@ -163,9 +163,9 @@ save_chunk = function(this_file, i) {
   dt[, nthread := NULL]
   browser()
   dt = merge(dt, unique(mems), 
-    by.x =c("seed", "dataset", "task_id", "learner"), 
-    by.y = c("seed", "task", "data_id", "learner_id"),
-    all.x = TRUE, all.y = FALSE
+             by.x =c("seed", "dataset", "task_id", "learner"), 
+             by.y = c("seed", "task", "data_id", "learner_id"),
+             all.x = TRUE, all.y = FALSE
   )
   dt[, learner := "classif.xgboost"][, setting := NULL]
   dt[, booster := as.factor(booster)]
@@ -196,6 +196,16 @@ dt = rbindlist(map(xgb_files, function(x) {
   gc()
   return(dt)
 }), use.names = TRUE, fill = TRUE)
+
+# We keep maximum 100k per task, to big otherwise.
+dt = dt[!(task_id == "23517"), ]
+dt = dt[repl %in% 1:10, ]
+sample_max = function(x, n) {
+  idx = seq_len(nrow(x))
+  idx = sample(idx, min(n, length(idx)))
+  x[idx,]
+}
+dt = dt[, sample_max(.SD, 1.5*10^5), by=task_id]
 
 fwrite(dt, paste0(csv_path, "rbv2_", learner, "/data.csv"))
 
@@ -240,4 +250,4 @@ dt = dt[as.integer(repl) %in% 1:10, c(cols, pars, metrics), with=FALSE]
 dt[, memory := M/1024][, M := NULL]
 dt[, brier := ifelse(is.na(brier), multiclass.brier, brier)][, multiclass.brier := NULL]
 dt[, auc := ifelse(is.na(auc ), multiclass.aunp, auc)][, multiclass.aunp := NULL]
-fwrite(dt, "~/../LRZ Sync+Share/multifidelity_data/rbv2_rpart/data2.csv")
+fwrite(dt, "~/../LRZ Sync+Share/multifidelity_data/rbv2_rpart/data.csv")
