@@ -1,6 +1,5 @@
 import yahpo_gym
-
-
+from memory_profiler import profile
 import numpy as np
 import time
 import os, psutil
@@ -16,6 +15,7 @@ def eval_time(objfun, repls = 1):
     print(f'Time taken: {np.round(t, 3)} s')
     print(f'Memory: {psutil.Process(os.getpid()).memory_info().rss / 1024 ** 2} MB')
 
+@profile
 def objfun():
     n_trials = 50
     bench = yahpo_gym.BenchmarkSet("lcbench", instance = '3945')
