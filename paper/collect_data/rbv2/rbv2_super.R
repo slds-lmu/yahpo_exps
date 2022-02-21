@@ -7,7 +7,7 @@ base_configs = c("rbv2_aknn", "rbv2_glmnet", "rbv2_ranger", "rbv2_rpart", "rbv2_
 
 pars = list(
     "svm" = c("cost", "gamma", "tolerance", "shrinking", "kernel", "degree"),
-    "ranger" = c("num.trees", "replace", "sample.fraction", "mtry.power", "respect.unordered.factors", "min.node.size", "splitrule"),
+    "ranger" = c("num.trees", "replace", "sample.fraction", "mtry.power", "respect.unordered.factors", "min.node.size", "splitrule", "num.random.splits"),
     "glmnet" = c("alpha", "s"),
     "xgboost" = c("booster", "nrounds", "eta", "gamma", "lambda", "alpha", "subsample",  "max_depth", "min_child_weight", "colsample_bytree", "colsample_bylevel",  "rate_drop", "skip_drop"),
     "aknn" = c("k", "M", "ef_construction", "ef", "distance"),

@@ -9,11 +9,9 @@
 library(data.table)
 library(mlr3misc)
 library(future.apply)
-future_map = future_lapply
 
 basepath = paste0(path.expand("~"), "/results")
 mempath = paste0(path.expand("~"), "/results/memory_rbv2")
-metrics = c("f1", "mmce", "auc", "logloss", "timepredict", "timetrain")
 fcts = c("num.impute.selected.cpo", "learner", "task")
 
 memfiles = list.files(mempath, full.names = TRUE)
@@ -22,7 +20,7 @@ memfiles = list.files(mempath, full.names = TRUE)
 map_chunked = function(all, fct, chunks = 10L, ...) {
   ixs = chunk_vector(seq_along(all), n_chunks = chunks)
   imap(ixs, function(x, i) {
-    catf(paste0("On chunk: ", i, "/", chunks, "\n"))
+    catf(paste0("On chunk: ", i, "/", chunks))
     fct(all, x, i, ...)
   })
   gc()
@@ -88,9 +86,9 @@ if (FALSE) {
   files = files[endsWith(files, ".rds") & !grepl("_prep", files) &!grepl("_full", files)]
   files = files[grepl("normal", files)]
   for (j in c(1:10)) {
-    j = 10
+    j = 1
     filename = files[[j]]
-    # lsti = readRDS(filename)
+    lsti = readRDS(filename)
     if (j == 10) {
       xgb_files = c()
       xs = chunk_vector(seq_len(length(lsti)), 3, shuffle = FALSE)
@@ -108,7 +106,8 @@ if (FALSE) {
         gc()
       }
     } else {
-      map_chunked(lsti, save_rds, chunks = ifelse(j != 10, 2, 16))
+      file = gsub(".rds", paste0(".rds"), filename)
+      map_chunked(lsti, save_rds, chunks = ifelse(j != 10, 2, 16), file)
     }
 
   }
@@ -340,3 +339,75 @@ dt[, auc := ifelse(is.na(auc ), multiclass.aunp, auc)][, multiclass.aunp := NULL
 dt[, maxdepth  := as.integer(maxdepth)][, minbucket := as.integer(minbucket)][, minsplit := as.integer(minsplit)]
 fwrite(dt, paste0(csv_path, "rbv2_", learner, "/data.csv"))
 
+
+
+##########################################################################################################
+# Sanity Checks
+
+# What do we keep for csv export?
+metrics = c("timetrain", "timepredict", "acc", "bac", "auc", "brier",  "f1", "logloss", "memory")
+cols = c("dataset", "task_id", "trainsize","repl", "seed")
+csv_path = "~/../LRZ Sync+Share/multifidelity_data/"
+
+
+learner = c("glmnet", "rpart", "ranger", "xgboost", "aknn", "svm")
+dt = map(paste0(csv_path, "rbv2_", learner, "/data.csv"), fread, nrows = 10000L)
+names(dt) = learner
+
+# Have all metrics
+map_lgl(dt, function(x) all(metrics %in% colnames(x)))
+# Have all cols
+map_lgl(dt, function(x) all(cols %in% colnames(x)))
+# Have multi-fidelities
+map_lgl(dt, function(x) length(table(x$trainsize)) > 1)
+
+# Have all params
+pars = list(
+  "svm" = c("cost", "gamma", "tolerance", "shrinking", "kernel", "degree"),
+  "ranger" = c("num.trees", "replace", "sample.fraction", "mtry.power", "respect.unordered.factors", "min.node.size", "splitrule", "num.random.splits"),
+  "glmnet" = c("alpha", "s"),
+  "xgboost" = c("booster", "nrounds", "eta", "gamma", "lambda", "alpha", "subsample",  "max_depth", "min_child_weight", "colsample_bytree", "colsample_bylevel",  "rate_drop", "skip_drop"),
+  "aknn" = c("k", "M", "ef_construction", "ef", "distance"),
+  "rpart" =  c("cp","maxdepth","minbucket","minsplit")
+)
+
+
+imap(dt, function(x,i) {
+  if (i != "super") {
+    parnames = pars[[i]]
+  } else {
+    parnames = unlist(imap(pars, function(x,i) paste0(i,".",x)))
+  }
+  parnames[which(!(parnames %in% colnames(x)))]
+})
+
+map_lgl(dt, function(x) {all(colnames(x) == unique(colnames(x)))})
+
+##########################################################################################################
+# Print task ids
+
+
+learner = c("glmnet", "rpart", "ranger", "xgboost", "aknn", "svm", "super")
+tids = map(paste0(csv_path, "rbv2_", learner, "/data.csv"), function(x) {
+  unique(fread(x)$task_id)
+})
+
+names(tids) = learner
+
+imap(tids, function(i, n) {
+  print(n)
+  dput(as.character(i))
+  catf(paste0('"', paste0(as.character(i), collapse = '","'), '"'))
+  invisible(NULL)
+})
+
+
+
+# Check all paramsets work
+library("paradox")
+library("mlr3misc")
+csv_path = "C:/Users/flo/LRZ Sync+Share/multifidelity_data"
+
+map(learner, function(x) {
+  source(paste0(csv_path, "/rbv2_", x, "/param_set.R"))
+})
