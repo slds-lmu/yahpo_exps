@@ -38,3 +38,8 @@ format = "latex"
 
 # For README's
 knitr::kable(over)
+
+
+for (cf in map(configs, "config_id")) {
+  length(BenchmarkSet$new(cf)$instances)
+}
