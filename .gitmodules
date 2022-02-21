@@ -1,0 +1,6 @@
+[submodule "paper/comparison/HPOBench"]
+	path = paper/comparison/HPOBench
+	url = git@github.com:automl/HPOBench.git
+[submodule "paper/comparison/HPO-B"]
+	path = paper/comparison/HPO-B
+	url = git@github.com:releaunifreiburg/HPO-B.git
