@@ -15,30 +15,46 @@ instance_stats = rbindlist(map(out, function(file) {
     return(dt)
 }))
 
+search_space_formula = function(dim) {
+    ceiling(20 + 40 * sqrt(dim))
+}
+
+
+
+replace_longnames = function(x) {
+    map_chr(x, function(x) {
+        if (x == "test_balanced_accuracy") {
+            x = "test_bac"
+        } 
+        if (x == "test_cross_entropy") {
+            x = "test_ce"
+        } 
+        return(x)
+    })
+}
+
 tabs = map(list.files(paste0(data_path, "/benchmark_tasks"), full.names = TRUE), function(path) {
     ll = RJSONIO::fromJSON(path)
     dt = rbindlist(map(ll, function(x) {
         xx = mean(merge(as.data.table(x), instance_stats, on = c("instance", "scenario", "target"))$spearman)
-        dt = data.table(x$scenario, x$instance, paste0(x$target, collapse = ","))
-        dt[, rho := xx]    
+        dt = data.table(x$scenario, x$instance, paste0(replace_longnames(x$target), collapse = ","))
+        dt[, rho := xx]  
     }))
-    colnames(dt) = c("scenario", "instances", "target(s)", "$\\rho$")
+    colnames(dt) = c("scenario", "instance", "target(s)", "$\\rho$")
     return(dt)
 })
 
-
-
-xx1 = knitr::kable(tabs[[2]], format = "latex", digits = 3, label = "tab:yahposo", 
-caption = "\\textbf{YAHPO-SO} (v1): Collection of single-objective benchmark instances.")
-xx2 = knitr::kable(tabs[[1]], format = "latex", digits = 3, label = "tab:yahpomo", 
-  caption = "\\textbf{YAHPO-MO} (v1): Collection of multi-objective benchmark instances.")
+xx1 = xtable::xtable(tabs[[2]], format = "latex", digits = 3, label = "tab:yahposo", 
+caption = "\\textbf{YAHPO-SO} (v1): Collection of single-objective benchmark instances. test\\_bac = test\\_balanced\\_accuracy. We indicate surrogate approximation quality using Spearman's $\\rho$.")
+xx2 = xtable::xtable(tabs[[1]], format = "latex", digits = 3, label = "tab:yahpomo", 
+  caption = "\\textbf{YAHPO-MO} (v1): Collection of multi-objective benchmark instances. test\\_bac = test\\_balanced\\_accuracy, test\\_ce: test\\_cross\\_entropy. We indicate surrogate approximation quality using Spearman's $\\rho$.")
 
 
 con = file("paper/viz_tables/tables_benchmark_instances.tex", open = "wt")
-writeLines(xx1, con)
+writeLines(print(xx1, booktabs = TRUE, sanitize.colnames.function = identity), con)
 close(con)
 con = file("paper/viz_tables/tables_benchmark_instances.tex", open = "at")
-writeLines(xx2, con)
+writeLines(print(xx2, booktabs = TRUE, sanitize.colnames.function = identity), con)
 close(con)
 
 
