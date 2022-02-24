@@ -5,7 +5,7 @@ from memory_profiler import profile
 import numpy as np
 import time
 import os, psutil
-def eval_time(objfun, repls = 5):
+def eval_time(objfun, repls = 10):
     t = [None for _ in range(repls)]
     for i in range(repls):
         t0 = time.time(); 

@@ -4,7 +4,7 @@ from memory_profiler import profile
 import numpy as np
 import time
 import os, psutil
-def eval_time(objfun, repls = 1):
+def eval_time(objfun, repls = 10):
     t = [None for _ in range(repls)]
     for i in range(repls):
         t0 = time.time(); 
@@ -17,7 +17,7 @@ def eval_time(objfun, repls = 1):
     
 @profile
 def objfun():
-    n_trials = 50
+    n_trials = 300
     bench = yahpo_gym.BenchmarkSet("lcbench", instance = '3945')
     xs = [None for _ in range(n_trials)]
     # Random search
