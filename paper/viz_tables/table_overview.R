@@ -23,20 +23,21 @@ fixup_fidelity = function(fid) {
 
 over = rbindlist(map(configs, function(cf) {data.table(
     "Scenario" = cf$config_id,
-    "#HPs" = length(c(cf$cont_names, cf$cat_names)) - 1L,
+    "#HPs" = length(setdiff(c(cf$cont_names, cf$cat_names), cf$fidelity)) - 1L,
     "#Targets" = length(cf$y_names),
     "#Instances" = length(BenchmarkSet$new(cf$config_id)$instances),
     "Space" = cf_to_space(cf),
     "Fidelity" = fixup_fidelity(cf$fidelity[1])
 )}))
 
-xtable::xtable(over, 
+xtb = xtable::xtable(over, 
 caption = "Overview of Scenarios in YAHPO Gym. Scenarios have between 4 and 35 hyperparameters, 2-12 targets and up to 114 instances.\\
   Mixed = mixed search space, Deps = hierarchical search space, frac = dataset fraction",
 label = "tab:overview",
 format = "latex"
 )
 
+print(xtb, booktabs = TRUE, include.rownames=FALSE)
 # For README's
 knitr::kable(over)
 

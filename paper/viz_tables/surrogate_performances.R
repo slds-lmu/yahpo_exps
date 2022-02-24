@@ -37,18 +37,22 @@ drop_idx = instance_stats[, list(sp = mean(spearman), scenario = unique(scenario
 
 instance_stats = instance_stats[!drop_idx, on = c("instance", "scenario")]
 instance_stats[, target := make_names(target)]
-
+instance_stats = instance_stats[!(target %in% c("timepredict", "rampredict" ,"ramtrain", 'f1')) & instance != "167083" & scenario != "fcnet",]
 p = ggplot(instance_stats, aes(x=target, y = spearman)) + 
   geom_boxplot(outlier.shape =NA) +
   geom_jitter(width = .1, alpha = .3) +
   theme_bw() +
   xlab("") +
   ylab(TeX("Spearman's $\\rho$")) +
-  facet_wrap(~scenario) +
+  facet_wrap(~scenario, scales = "free_x") +
   coord_cartesian(ylim = c(0.5, 1)) +
   theme(
       axis.title = element_text(size = 14),
-      axis.text = element_text(size = 12)
+      axis.text = element_text(size = 12),
+      axis.text.x = element_text(size = 12, angle = -45)
   )
 ggsave("paper/viz_tables/boxplot_surrogate_rho.pdf")
   
+
+head(instance_stats)
+
