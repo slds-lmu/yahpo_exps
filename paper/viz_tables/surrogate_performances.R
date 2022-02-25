@@ -2,17 +2,33 @@ library(data.table)
 library(ggplot2)
 library(mlr3misc)
 library(latex2exp)
-data_path = "~/Documents/repos/yahpo_data"
+
+# data_path = "~/Documents/repos/yahpo_data"
+data_path = "/home/flo/LRZ Sync+Share/multifidelity_data"
 out = discard(map(list.files(data_path, full.names = TRUE), list.files, pattern = "onnx.csv", full.names = TRUE), function(x) length(x) == 0)
  
 global_stats = rbindlist(map(out, function(file) {
     dt = fread(file)
-    dt = dt[instance == "all", ]
+    dt = dt[instance == "all" | instance == "all/CIFAR10", ]
     dt[, instance := NULL][, scenario := basename(dirname(file))]
     return(dt)
 }))
 
 fwrite(global_stats, "paper/viz_tables/global_surrogate_stats.csv")
+
+statstab = global_stats[scenario != "fcnet", c(1, 4, 5)]
+statstab = statstab[!(target %in% c("rampredict", "ramtrain", "timepredict"))]
+statstab[, spearman := round(spearman, 2)]
+statstab[target == "test_cross_entropy", target := "test_ce"]
+statstab[target == "val_cross_entropy", target := "val_ce"]
+statstab[target == "test_balanced_accuracy", target := "test_bac"]
+statstab[target == "val_balanced_accuracy", target := "val_bac"]
+
+xx = statstab[, paste0(target, ":", spearman, collapse = ","), by = "scenario"]
+colnames(xx) = c("Scenario", "$\\rho$")
+xtb = xtable::xtable(xx, label="tab:surr_metrics", caption="Average surrogate performance (Spearman's rho) across all instances per scenario/target. We abbreviate cross\\_entropy (ce) and balanced\\_accuracy(bac) for brevity.")
+print(xtb, style = "booktabs", include.rownames=FALSE, sanitize.colnames.function = identity)
+
 
 
 instance_stats = rbindlist(map(out, function(file) {

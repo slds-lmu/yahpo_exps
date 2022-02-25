@@ -5,7 +5,7 @@ library(mlr3misc)
 library(latex2exp)
 library(RJSONIO)
 
-data_path = "~/Documents/repos/yahpo_data/"
+data_path = "/home/flo/LRZ Sync+Share/multifidelity_data"
 
 out = discard(map(list.files(data_path, full.names = TRUE), list.files, pattern = "onnx.csv", full.names = TRUE), function(x) length(x) == 0)
 instance_stats = rbindlist(map(out, function(file) {
@@ -33,7 +33,7 @@ replace_longnames = function(x) {
     })
 }
 
-tabs = map(list.files(paste0(data_path, "/benchmark_tasks"), full.names = TRUE), function(path) {
+tabs = map(list.files(paste0(data_path, "/benchmark_suites/v0.1"), full.names = TRUE), function(path) {
     ll = RJSONIO::fromJSON(path)
     dt = rbindlist(map(ll, function(x) {
         xx = mean(merge(as.data.table(x), instance_stats, on = c("instance", "scenario", "target"))$spearman)
@@ -44,9 +44,9 @@ tabs = map(list.files(paste0(data_path, "/benchmark_tasks"), full.names = TRUE),
     return(dt)
 })
 
-xx1 = xtable::xtable(tabs[[2]], format = "latex", digits = 3, label = "tab:yahposo", 
+xx1 = xtable::xtable(tabs[[2]], format = "latex", digits = 2, label = "tab:yahposo", 
 caption = "\\textbf{YAHPO-SO} (v1): Collection of single-objective benchmark instances. test\\_bac = test\\_balanced\\_accuracy. We indicate surrogate approximation quality using Spearman's $\\rho$.")
-xx2 = xtable::xtable(tabs[[1]], format = "latex", digits = 3, label = "tab:yahpomo", 
+xx2 = xtable::xtable(tabs[[1]], format = "latex", digits = 2, label = "tab:yahpomo", 
   caption = "\\textbf{YAHPO-MO} (v1): Collection of multi-objective benchmark instances. test\\_bac = test\\_balanced\\_accuracy, test\\_ce: test\\_cross\\_entropy. We indicate surrogate approximation quality using Spearman's $\\rho$.")
 
 
