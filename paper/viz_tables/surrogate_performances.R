@@ -49,7 +49,6 @@ make_names = function(x) {
 # Decide which instances to drop:
 rho_cutoff = 0.7
 drop_idx = instance_stats[, list(sp = mean(spearman), scenario = unique(scenario)), by = "instance"][sp < rho_cutoff]
-# lcbench : 167083, 167184
 
 instance_stats = instance_stats[!drop_idx, on = c("instance", "scenario")]
 instance_stats[, target := make_names(target)]
