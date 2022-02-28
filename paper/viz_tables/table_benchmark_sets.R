@@ -12,12 +12,11 @@ instance_stats = rbindlist(map(out, function(file) {
     dt = fread(file)
     dt = dt[instance != "all", ]
     dt[, scenario := basename(dirname(file))]
+    dt[scenario == "nb301", instance := "CIFAR10"]
     return(dt)
 }))
 
-search_space_formula = function(dim) {
-    ceiling(20 + 40 * sqrt(dim))
-}
+overview = fread("paper/viz_tables/overview.csv")
 
 
 
@@ -42,6 +41,10 @@ tabs = map(list.files(paste0(data_path, "/benchmark_suites/v0.1"), full.names = 
     }))
     colnames(dt) = c("scenario", "instance", "target(s)", "$\\rho$")
     return(dt)
+})
+
+tabs = map(tabs, function(x) {
+    merge(x, y = overview, by.x = "scenario", by.y = "Scenario")[,c(1:4, 10)]
 })
 
 xx1 = xtable::xtable(tabs[[2]], format = "latex", digits = 2, label = "tab:yahposo", 

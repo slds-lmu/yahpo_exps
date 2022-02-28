@@ -30,6 +30,11 @@ over = rbindlist(map(configs, function(cf) {data.table(
     "Fidelity" = fixup_fidelity(cf$fidelity[1])
 )}))
 
+# Re-order
+over = over[Scenario != "fcnet"]
+over = over[c(3:9, 2, 1, 10:14),]
+
+
 xtb = xtable::xtable(over, 
 caption = "Overview of Scenarios in YAHPO Gym. Scenarios have between 4 and 35 hyperparameters, 2-12 targets and up to 114 instances.\\
   Mixed = mixed search space, Deps = hierarchical search space, frac = dataset fraction",
@@ -37,11 +42,13 @@ label = "tab:overview",
 format = "latex"
 )
 
+search_space_formula = function(dim) {
+    ceiling(20 + 40 * sqrt(dim))
+}
+
 print(xtb, booktabs = TRUE, include.rownames=FALSE)
+
 # For README's
 knitr::kable(over)
 
-
-for (cf in map(configs, "config_id")) {
-  length(BenchmarkSet$new(cf)$instances)
-}
+fwrite(over[, nevals := search_space_formula(.SD[,2])], "paper/viz_tables/overview.csv")
