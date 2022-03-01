@@ -60,15 +60,21 @@ def dump_data(key, overwrite = False):
         return dct
 
 if __name__ == '__main__':
+
+    # This goes into yahpo's documentation and is used to generate the tables
     dcts = Parallel(n_jobs=4)(delayed(dump_data)(k) for k in cfg().configs.keys())
     print(dcts)
 
     import pandas as pd
     df = pd.DataFrame.from_dict([x for x in dcts if x is not None])
     print(df)
+    instances = df.copy()
+
     df.drop(['full_per_task'], axis=1, inplace=True)
     df.to_csv('scenario_stats.csv')
 
-
+    instances['instances'] = instances.full_per_task.apply(lambda x: ','.join([k for k,v in x.items()]))
+    instances.drop('full_per_task', axis=1, inplace=True)
+    instances.loc[:, ['instance', 'instances']].rename(columns = {'instance' : 'scenario'}).to_csv('instances.csv', index=False)
 
 
