@@ -1,4 +1,4 @@
-This directory contains all code to replicate all results, tables and figures of single-objective and multi-objective benchmarks.
+This directory contains all code to replicate all results, tables and figures of the single-objective and multi-objective benchmarks.
 
 * `plots/` contains all plots presented in the paper
 * `results/` contains raw benchmark results saved as `.rds` files
@@ -6,14 +6,12 @@ This directory contains all code to replicate all results, tables and figures of
 * `analyze_mf.R` and `analyze_mo.R` contain code needed to analyze the results and create plots and tables
 * `dehb_wrapper.py`, `hb_bohb_wrapper.py`, `helpers.R`, `optuna_wrapper.py`, `random_wrapper.py`, and `smac_wrapper.py`are helper files that contain code needed by the main files
 * `registry_yahpo_mf_clean.zip` and `registry_yahpo_mo_clean.zip` are the original batchtools registries as used on the cluster (stripped of the individual results which are collected in `results/` and stripped of the logs to save some space); see `run_mf.R` or `run_mo.R` for an example on how to inspect these registries
-* `renv.lock` list the exact R packages that were used on the cluster 
-* `requirements.txt` list the exact python modules that were used on the cluster
+* `renv.lock` lists the exact R packages that were used on the cluster 
+* `requirements.txt` lists the exact python modules that were used on the cluster
 
 R 4.0.5 and python 3.8.7 were used.
 
-To replicate our results, install R and do the following steps:
-
-We assume that you work in a terminal and are in the current directory (`rts`)
+To replicate our results, install R and do the following steps (we assume that you work in a terminal and are in the current directory):
 
 Then, within R (we assume that you managed to install R 4.0.5 or use a docker environment):
 
@@ -43,6 +41,7 @@ And setup YAHPO GYM (within the virtualenv):
 from yahpo_gym import local_config
 local_config.init_config()
 local_config.set_data_path("yahpo_data")
+```
 
 To obtain DEHB:
 

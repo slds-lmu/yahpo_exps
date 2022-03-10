@@ -250,3 +250,5 @@ setkeyv(tmp$tabular, "rank")
 setkeyv(tmp$surrogate, "rank")
 ranking = map_chr(tmp, function(x) paste0(x$rank[match(x$optimizer, optimizers)], collapse = ""))
 
+tab = getJobTable()
+as.numeric(sum(tab$time.running), unit = "hours")  # 1175.6 CPUh

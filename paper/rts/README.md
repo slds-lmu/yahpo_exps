@@ -14,9 +14,7 @@ Note that experiments were conducted with a [pre-alpha version](https://github.c
 
 R 4.0.2 and python 3.7.10 (via reticulate) were used.
 
-To replicate our results, install R and do the following steps:
-
-We assume that you work in a terminal and are in the current directory (`rts`)
+To replicate our results, install R and do the following steps (we assume that you work in a terminal and are in the current directory):
 
 Then, within R (we assume that you managed to install R 4.0.2 or use a docker environment):
 
