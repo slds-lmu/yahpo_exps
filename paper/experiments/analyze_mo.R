@@ -1,8 +1,8 @@
-library(data.table)
-library(mlr3misc)
-library(ggplot2)
-library(pammtools)
-library(emoa)
+library(data.table)  # 1.14.2
+library(ggplot2)  # 3.3.5
+library(pammtools)  # 0.5.7
+library(emoa)  # 0.5-0.1
+
 values = c("#386cb0", "#fdb462", "#7fc97f", "#ef3b2c", "#662506", "#a6cee3", "#984ea3")
 results = readRDS("results/results_mo.rds")
 results[method == "randomx4", budget := 1 / 4, by = .(method, scenario, instance, targets, repl)]
@@ -81,7 +81,7 @@ g = ggplot(aes(x = cumbudget_scaled, y = mean, colour = method, fill = method), 
   theme(legend.position = "bottom", legend.title = element_text(size = rel(0.75)), legend.text = element_text(size = rel(0.75)))
 ggsave("plots/anytime_average_rank_mo.png", plot = g, device = "png", width = 6, height = 4)
 
-library(scmamp)
+library(scmamp)  # 0.3.2
 best_agg = agg[cumbudget_scaled == 0.25]
 best_agg[, problem := paste0(scenario, "_", instance, "_", targets)]
 tmp = - as.matrix(dcast(best_agg, problem ~ method, value.var = "mean_hvi")[, -1])

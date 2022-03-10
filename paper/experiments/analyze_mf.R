@@ -1,7 +1,7 @@
-library(data.table)
-library(mlr3misc)
-library(ggplot2)
-library(pammtools)
+library(data.table)  # 1.14.2
+library(ggplot2)  # 3.3.5
+library(pammtools)  # 0.5.7
+
 values = c("#386cb0", "#fdb462", "#7fc97f", "#ef3b2c", "#662506", "#a6cee3", "#984ea3")
 dat = readRDS("results/results_mf.rds")
 dat[, cumbudget := cumsum(budget), by = .(method, scenario, instance, repl)]
@@ -96,7 +96,7 @@ g = ggplot(aes(x = cumbudget_scaled, y = mean, colour = method, fill = method), 
   theme(legend.position = "bottom", legend.title = element_text(size = rel(0.75)), legend.text = element_text(size = rel(0.75)))
 ggsave("plots/anytime_average_rank_mf.png", plot = g, device = "png", width = 6, height = 4)
 
-library(scmamp)
+library(scmamp)  # 0.3.2
 best_agg = agg_budget[cumbudget_scaled == 0.25]  # switch to 1 for final
 best_agg[, problem := paste0(scenario, "_", instance)]
 tmp = - as.matrix(dcast(best_agg, problem ~ method, value.var = "mean")[, -1])

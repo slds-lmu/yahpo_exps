@@ -8,8 +8,7 @@ library(mlr3mbo)  # @moo
 library(bbotk)  # @focussearch
 library(paradox)  # @expression_params
 library(miesmuschel)  # @ yahpo_mo
-reticulate::use_virtualenv("mf_env/", required = TRUE)
-#reticulate::use_virtualenv("/home/lps/.local/share/virtualenvs/yahpo_gym-4ygV7ggv/", required = TRUE)
+reticulate::use_virtualenv("FIXME_python_path_of_your_virtualenv", required = TRUE)
 library(reticulate)
 yahpo_gym = import("yahpo_gym")
 
@@ -19,21 +18,21 @@ RhpcBLASctl::blas_set_num_threads(1L)
 RhpcBLASctl::omp_set_num_threads(1L)
 
 root = here::here()
-experiments_dir = file.path(root, "experiments")
+experiments_dir = file.path(root, "paper", "experiments")
 
 source_files = map_chr("helpers.R", function(x) file.path(experiments_dir, x))
 for (sf in source_files) {
   source(sf)
 }
 
-#reg = makeExperimentRegistry(file.dir = "/gscratch/lschnei8/registry_yahpo_mo", packages = packages, source = source_files)
+#reg = makeExperimentRegistry(file.dir = "FIXME", packages = packages, source = source_files)
 reg = makeExperimentRegistry(file.dir = NA, conf.file = NA, packages = packages, source = source_files)  # interactive session
 saveRegistry(reg)
 # reg = loadRegistry("registry_yahpo_mo_clean")  # to inspect the original registry on the cluster
 # tab = getJobTable()
 
 random_wrapper = function(job, data, instance, ...) {
-  reticulate::use_virtualenv("mf_env/", required = TRUE)
+  reticulate::use_virtualenv("FIXME_python_path_of_your_virtualenv", required = TRUE)
   library(yahpogym)
   logger = lgr::get_logger("bbotk")
   logger$set_threshold("warn")
@@ -46,7 +45,7 @@ random_wrapper = function(job, data, instance, ...) {
 }
 
 randomx4_wrapper = function(job, data, instance, ...) {
-  reticulate::use_virtualenv("mf_env/", required = TRUE)
+  reticulate::use_virtualenv("FIXME_python_path_of_your_virtualenv", required = TRUE)
   library(yahpogym)
   logger = lgr::get_logger("bbotk")
   logger$set_threshold("warn")
@@ -61,7 +60,7 @@ randomx4_wrapper = function(job, data, instance, ...) {
 }
 
 mies_wrapper = function(job, data, instance, ...) {
-  reticulate::use_virtualenv("mf_env/", required = TRUE)
+  reticulate::use_virtualenv("FIXME_python_path_of_your_virtualenv", required = TRUE)
   library(yahpogym)
   logger = lgr::get_logger("bbotk")
   logger$set_threshold("warn")
@@ -82,7 +81,7 @@ mies_wrapper = function(job, data, instance, ...) {
 }
 
 parego_wrapper = function(job, data, instance, ...) {
-  reticulate::use_virtualenv("mf_env/", required = TRUE)
+  reticulate::use_virtualenv("FIXME_python_path_of_your_virtualenv", required = TRUE)
   library(yahpogym)
   logger = lgr::get_logger("bbotk")
   logger$set_threshold("warn")
@@ -103,7 +102,7 @@ parego_wrapper = function(job, data, instance, ...) {
 }
 
 smsego_wrapper = function(job, data, instance, ...) {
-  reticulate::use_virtualenv("mf_env/", required = TRUE)
+  reticulate::use_virtualenv("FIXME_python_path_of_your_virtualenv", required = TRUE)
   library(yahpogym)
   logger = lgr::get_logger("bbotk")
   logger$set_threshold("warn")
@@ -124,7 +123,7 @@ smsego_wrapper = function(job, data, instance, ...) {
 }
 
 ehvi_wrapper = function(job, data, instance, ...) {
-  reticulate::use_virtualenv("mf_env/", required = TRUE)
+  reticulate::use_virtualenv("FIXME_python_path_of_your_virtualenv", required = TRUE)
   library(yahpogym)
   logger = lgr::get_logger("bbotk")
   logger$set_threshold("warn")
@@ -145,7 +144,7 @@ ehvi_wrapper = function(job, data, instance, ...) {
 }
 
 mego_wrapper = function(job, data, instance, ...) {
-  reticulate::use_virtualenv("mf_env/", required = TRUE)
+  reticulate::use_virtualenv("FIXME_python_path_of_your_virtualenv", required = TRUE)
   library(yahpogym)
   logger = lgr::get_logger("bbotk")
   logger$set_threshold("warn")
@@ -261,7 +260,7 @@ results = reduceResultsList(done, function(x, job) {
   tmp
 })
 results = rbindlist(results, fill = TRUE)
-saveRDS(results, "results_mo.rds")
+saveRDS(results, "results/results_mo.rds")
 
 tab = getJobTable()
 as.numeric(sum(tab$time.running), units = "hours")  # 2940.432 CPUh for our benchmark (optimizers + yahpo overhead which is negligable)

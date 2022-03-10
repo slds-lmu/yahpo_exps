@@ -3,4 +3,4 @@
 [Software](https://github.com/pfistfl/yahpo_gym)
 [Surrogates](https://github.com/pfistfl/yahpo_data)
 
-Contains code for experiments and examples for the paper acompanying YAHPO Gym.
+Contains code for experiments and examples for the paper accompanying YAHPO Gym.

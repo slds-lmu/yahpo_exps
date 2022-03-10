@@ -1,4 +1,4 @@
-This directory contains all code to replicate all results, tables and figures of the real vs. tabular vs surrogate section.
+This directory contains all code to replicate all results, tables and figures of the real vs. tabular vs. surrogate section.
 
 Note that experiments were conducted with a [pre-alpha version](https://github.com/slds-lmu/paper_2021_multi_fidelity_surrogates) of YAHPO GYM.
 
