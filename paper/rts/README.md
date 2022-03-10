@@ -8,7 +8,7 @@ Note that experiments were conducted with a [pre-alpha version](https://github.c
 * `run_experiments.R` is the main file
 * `analyze_experiments.R` contains code needed to analyze the results and create plots and tables
 * `LearnerRegrBananasNN.R`, `nn_ensemble.py`, and `real_tabular_surrogate_helpers.R` are helper files that contain code needed by the main file
-* `registry_rts_clean.zip` is the original batchtool registry as used on the cluster (stripped of the individual results which are collected in `results/` and stripped of the logs to save some space); see `run_experiments.R` for an example on how to inspect this registry
+* `registry_rts_clean.zip` is the original batchtools registry as used on the cluster (stripped of the individual results which are collected in `results/` and stripped of the logs to save some space); see `run_experiments.R` for an example on how to inspect this registry
 * `renv.lock` lists the exact R packages that were used on the cluster
 * `requirements.txt` lists the exact python modules required for Naszilla and its NN ensemble surrogate
 
@@ -25,6 +25,7 @@ install.packages("renv")  # 0.15.4
 renv::restore(lockfile = "renv.lock")
 ```
 
+Close the R session, followed by setting up python and a virtualenv (we use pyenv and pipenv here).
 Naszilla is required for the NN ensemble surrogate (no explicit install is needed though but we still need the requirements):
 
 ```bash
