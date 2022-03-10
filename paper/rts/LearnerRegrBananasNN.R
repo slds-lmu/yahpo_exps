@@ -1,5 +1,7 @@
 library(R6)
 library(mlr3)
+reticulate::use_python("FIXME_python_path_of_your_virtualenv", required = TRUE)
+reticulate::use_virtualenv("FIXME_python_path_of_your_virtualenv", required = TRUE)
 library(reticulate)
 py_run_file("nn_ensemble.py")
 LearnerRegrBananasNN= R6Class("LearnerRegrBananasNN", inherit = LearnerRegr,

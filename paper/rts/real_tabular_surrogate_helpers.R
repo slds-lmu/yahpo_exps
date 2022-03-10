@@ -6,15 +6,13 @@ library(mlr3misc)
 library(mlr3oml)
 library(mlr3learners)
 library(mlr3mbo)
-library(miesmuschel)
 library(mlr3hyperband)
 library(stringdist)
 library(R6)
 library(checkmate)
 library(data.table)
 
-root = here::here()
-workdir = "multifidelity_data/"
+workdir = "configs/"
 
 # Branin
 set.seed(123)
@@ -45,30 +43,6 @@ set.seed(123)
 cfg_borehole = cfgs("borehole")
 data_tabular_borehole = readRDS(file.path(workdir, "borehole_surrogate", "data.rds"))
 cfg_borehole_surrogate = cfgs("borehole_surrogate", workdir = workdir)
-
-# RpartPhoneme
-set.seed(123)
-cfg_rpartphoneme = cfgs("rpartphoneme")
-data_tabular_rpartphoneme = readRDS(file.path(workdir, "rpartphoneme_surrogate", "data.rds"))
-cfg_rpartphoneme_surrogate = cfgs("rpartphoneme_surrogate", workdir = workdir)
-
-# RpartBtc
-set.seed(123)
-cfg_rpartbtc = cfgs("rpartbtc")
-data_tabular_rpartbtc = readRDS(file.path(workdir, "rpartbtc_surrogate", "data.rds"))
-cfg_rpartbtc_surrogate = cfgs("rpartbtc_surrogate", workdir = workdir)
-
-# GlmnetPhoneme
-set.seed(123)
-cfg_glmnetphoneme = cfgs("glmnetphoneme")
-data_tabular_glmnetphoneme = readRDS(file.path(workdir, "glmnetphoneme_surrogate", "data.rds"))
-cfg_glmnetphoneme_surrogate = cfgs("glmnetphoneme_surrogate", workdir = workdir)
-
-# GlmnetBtc
-set.seed(123)
-cfg_glmnetbtc = cfgs("glmnetbtc")
-data_tabular_glmnetbtc = readRDS(file.path(workdir, "glmnetbtc_surrogate", "data.rds"))
-cfg_glmnetbtc_surrogate = cfgs("glmnetbtc_surrogate", workdir = workdir)
 
 
 

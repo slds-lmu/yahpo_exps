@@ -1,7 +1,6 @@
-library(data.table)
-library(mlr3misc)
-library(ggplot2)
-library(ggpubr)
+library(data.table)  # 1.14.2
+library(ggplot2)  # 3.3.5
+library(ggpubr)  # 0.4.0
 
 results_branin = readRDS("results/rts_results_branin.rds")
 results_currin = readRDS("results/rts_results_currin.rds")

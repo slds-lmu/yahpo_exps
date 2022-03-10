@@ -4,17 +4,18 @@ library(mlr3misc)
 library(data.table)
 
 root = here::here()
-source(file.path(root, "real_tabular_surrogate_helpers.R"))
+source(file.path(root, "paper", "rts", "real_tabular_surrogate_helpers.R"))
 
-#reg = makeExperimentRegistry(file.dir = "/dss/dssfs02/lwp-dss-0001/pr74ze/pr74ze-dss-0000/ru84tad2/registry_rts", source = file.path(root, "real_tabular_surrogate_helpers.R"))
-reg = makeExperimentRegistry(file.dir = NA, source = file.path(root, "real_tabular_surrogate_helpers.R"))  # interactive session
+#reg = makeExperimentRegistry(file.dir = "FIXME", source = file.path(root, "real_tabular_surrogate_helpers.R"))
+reg = makeExperimentRegistry(file.dir = NA, source = file.path(root, "paper", "rts", "real_tabular_surrogate_helpers.R"))  # interactive session
 saveRegistry(reg)
+# reg = loadRegistry("registry_rts_clean")  # to inspect the original registry on the cluster
+# tab = getJobTable()
 
 eval_ = function(job, data, instance, ...) {
   logger = lgr::get_logger("bbotk")
   logger$set_threshold("warn")
-  root = here::here()
-  workdir = "multifidelity_data/"
+  workdir = "configs/"
 
   xs = list(...)
   optimizer = xs$optimizer
@@ -35,7 +36,7 @@ eval_ = function(job, data, instance, ...) {
 
     if (acqopt == "default") {
       if (instance$method != "tabular") {
-        acqopt = AcqOptimizer$new(opt("nloptr", algorithm = "NLOPT_LN_NELDERMEAD"), trm("none"))  # FIXME: or "NLOPT_LN_BOBYQA"
+        acqopt = AcqOptimizer$new(opt("nloptr", algorithm = "NLOPT_LN_NELDERMEAD"), trm("none"))
       }
     } else if (acqopt == "alt") {
       if (instance$method != "tabular") {
@@ -54,7 +55,7 @@ eval_ = function(job, data, instance, ...) {
 }
 addAlgorithm("eval_", fun = eval_)
 
-instances_plan = setDT(expand.grid(id = c("branin", "currin", "hartmann3d", "hartmann6d", "borehole", "rpartphoneme", "glmnetphoneme", "rpartbtc", "glmnetbtc"), method = c("real", "tabular", "surrogate")))
+instances_plan = setDT(expand.grid(id = c("branin", "currin", "hartmann3d", "hartmann6d", "borehole"), method = c("real", "tabular", "surrogate")))
 instances_plan[, id_plan := 1:.N]
 
 prob_designs = imap(split(instances_plan, instances_plan$id_plan), function(instancex, name) {
