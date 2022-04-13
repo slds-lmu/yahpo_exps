@@ -24,24 +24,32 @@ get_incumbent_cumbudget = function(incumbent, cumbudget_scaled) {
 
 dat_budget = dat[, .(incumbent_budget = get_incumbent_cumbudget(incumbent, cumbudget_scaled), cumbudget_scaled = seq(0, 1, length.out = 101)), by = .(method, scenario, instance, repl)]
 
-ecdf_dat = copy(dat_budget)
-ecdf_res = map_dtr(unique(ecdf_dat$scenario), function(scenario_) {
+ecdf_dat = copy(dat)
+ecdf_res = 
+  map_dtr(unique(ecdf_dat$method), function(method_) {
+  map_dtr(unique(ecdf_dat$scenario), function(scenario_) {
   map_dtr(unique(ecdf_dat$instance), function(instance_) {
-    tmp = dat_budget[scenario == scenario_ & instance == instance_]
+    tmp = dat[scenario == scenario_ & instance == instance_ & method == method_]
     if (NROW(tmp) == 0L) return(data.table())
-    ecdf_fun = ecdf(tmp$incumbent_budget)
-    data.table(nr = seq(0, 1, length.out = 101), ecdf = ecdf_fun(seq(0, 1, length.out = 101)), scenario = scenario_, instance = instance_)
+    x = -tmp$target
+    if (any(x > 1)) x = x/100
+    x = 1 - x
+    ecdf_fun = ecdf(x)
+    data.table(nr = seq(min(x), max(x), length.out = 101), ecdf = ecdf_fun(seq(min(x), max(x), length.out = 101)), scenario = scenario_, instance = instance_, method = method_)
+  })
   })
 })
 ecdf_res[, problem := paste0(scenario, "_", instance)]
 
-g = ggplot(aes(x = nr, y = ecdf, colour = problem), data = ecdf_res) +
+g = ggplot(aes(x = nr, y = ecdf, colour = method), data = ecdf_res) +
   geom_line() +
-  labs(x = "Normalized Regret", y = expression("P(X " <= " x)"), colour = "Instance") +
+  labs(x = "Accuracy", y = expression("P(X " <= " x)"), colour = "Optimizer") +
   theme_minimal() +
-  theme(legend.position = "bottom", legend.title = element_text(size = rel(0.75)), legend.text = element_text(size = rel(0.75)))
+  scale_colour_manual(values = values) +
+  theme(legend.position = "bottom", legend.title = element_text(size = rel(0.75)), legend.text = element_text(size = rel(0.75))) +
+  facet_wrap(~problem, scales = "free_x")
 
-ggsave("plots/ecdf.png", plot = g, device = "png", width = 6, height = 4)
+ggsave("plots/ecdf.png", plot = g, device = "png", width = 6, height = 4, scale = 1.4)
 
 agg_budget = dat_budget[, .(mean = mean(incumbent_budget), se = sd(incumbent_budget) / sqrt(.N)), by = .(cumbudget_scaled, method, scenario, instance)]
 agg_budget[, method := factor(method, levels = c("random", "smac4hpo", "hb", "bohb", "dehb", "smac4mf", "optuna"), labels = c("Random", "SMAC", "HB", "BOHB", "DEHB", "SMAC-HB", "optuna"))]
