@@ -43,13 +43,14 @@ ecdf_res[, problem := paste0(scenario, "_", instance)]
 
 g = ggplot(aes(x = nr, y = ecdf, colour = method), data = ecdf_res) +
   geom_line() +
-  labs(x = "Accuracy", y = expression("P(X " <= " x)"), colour = "Optimizer") +
+  labs(x = "Missclassification Error", y = expression("P(X " >= " x)"), colour = "Optimizer") +
   theme_minimal() +
   scale_colour_manual(values = values) +
   theme(legend.position = "bottom", legend.title = element_text(size = rel(0.75)), legend.text = element_text(size = rel(0.75))) +
-  facet_wrap(~problem, scales = "free_x")
+  facet_wrap(~problem, scales = "free_x") +
+  scale_x_reverse()
 
-ggsave("plots/ecdf.png", plot = g, device = "png", width = 6, height = 4, scale = 1.4)
+ggsave("plots/ecdf.png", plot = g, device = "png", width = 6, height = 8, scale = 1.2)
 
 agg_budget = dat_budget[, .(mean = mean(incumbent_budget), se = sd(incumbent_budget) / sqrt(.N)), by = .(cumbudget_scaled, method, scenario, instance)]
 agg_budget[, method := factor(method, levels = c("random", "smac4hpo", "hb", "bohb", "dehb", "smac4mf", "optuna"), labels = c("Random", "SMAC", "HB", "BOHB", "DEHB", "SMAC-HB", "optuna"))]
