@@ -48,7 +48,7 @@ g = ggplot(aes(x = cumbudget_scaled, y = mean_hvi, colour = method, fill = metho
   geom_stepribbon(aes(min = mean_hvi - se_hvi, max = mean_hvi + se_hvi), colour = NA, alpha = 0.3) +
   scale_colour_manual(values = values) +
   scale_fill_manual(values = values) +
-  labs(x = "% Budget Used", y = "Mean Normalized HVI", colour = "Optimizer", fill = "Optimizer") +
+  labs(x = "Fraction of Budget Used", y = "Mean Normalized HVI", colour = "Optimizer", fill = "Optimizer") +
   facet_wrap(~ scenario + instance + targets, scales = "free") +
   theme_minimal() +
   theme(legend.position = "bottom", legend.title = element_text(size = rel(0.75)), legend.text = element_text(size = rel(0.75)))
@@ -77,7 +77,7 @@ g = ggplot(aes(x = cumbudget_scaled, y = mean, colour = method, fill = method), 
   geom_ribbon(aes(min = mean - se, max = mean + se), colour = NA, alpha = 0.3) +
   scale_colour_manual(values = values) +
   scale_fill_manual(values = values) +
-  labs(x = "% Budget Used", y = "Mean Rank", colour = "Optimizer", fill = "Optimizer") +
+  labs(x = "Fraction of Budget Used", y = "Mean Rank", colour = "Optimizer", fill = "Optimizer") +
   theme_minimal() +
   theme(legend.position = "bottom", legend.title = element_text(size = rel(0.75)), legend.text = element_text(size = rel(0.75)))
 ggsave("plots/anytime_average_rank_mo.png", plot = g, device = "png", width = 6, height = 4)

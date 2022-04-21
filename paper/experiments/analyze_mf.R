@@ -40,6 +40,7 @@ ecdf_res =
   })
 })
 ecdf_res[, problem := paste0(scenario, "_", instance)]
+ecdf_res[, method := factor(method, levels = c("random", "smac4hpo", "hb", "bohb", "dehb", "smac4mf", "optuna"), labels = c("Random", "SMAC", "HB", "BOHB", "DEHB", "SMAC-HB", "optuna"))]
 
 g = ggplot(aes(x = nr, y = ecdf, colour = method), data = ecdf_res) +
   geom_line() +
@@ -47,10 +48,10 @@ g = ggplot(aes(x = nr, y = ecdf, colour = method), data = ecdf_res) +
   theme_minimal() +
   scale_colour_manual(values = values) +
   theme(legend.position = "bottom", legend.title = element_text(size = rel(0.75)), legend.text = element_text(size = rel(0.75))) +
-  facet_wrap(~problem, scales = "free_x") +
+  facet_wrap(~ problem, scales = "free", ncol = 4) +
   scale_x_reverse()
 
-ggsave("plots/ecdf.png", plot = g, device = "png", width = 6, height = 8, scale = 1.2)
+ggsave("plots/ecdf.png", plot = g, device = "png", width = 9, height = 11.25, scale = 1.2)
 
 agg_budget = dat_budget[, .(mean = mean(incumbent_budget), se = sd(incumbent_budget) / sqrt(.N)), by = .(cumbudget_scaled, method, scenario, instance)]
 agg_budget[, method := factor(method, levels = c("random", "smac4hpo", "hb", "bohb", "dehb", "smac4mf", "optuna"), labels = c("Random", "SMAC", "HB", "BOHB", "DEHB", "SMAC-HB", "optuna"))]
@@ -61,7 +62,7 @@ g = ggplot(aes(x = cumbudget_scaled, y = mean, colour = method, fill = method), 
   geom_stepribbon(aes(min = mean - se, max = mean + se), colour = NA, alpha = 0.3) +
   scale_colour_manual(values = values) +
   scale_fill_manual(values = values) +
-  labs(x = "% Budget Used", y = "Mean Normalized Regret", colour = "Optimizer", fill = "Optimizer") +
+  labs(x = "Fraction of Budget Used", y = "Mean Normalized Regret", colour = "Optimizer", fill = "Optimizer") +
   facet_wrap(~ scenario + instance, scales = "free", ncol = 4) +
   theme_minimal() +
   theme(legend.position = "bottom", legend.title = element_text(size = rel(0.75)), legend.text = element_text(size = rel(0.75)))
@@ -75,7 +76,7 @@ g = ggplot(aes(x = cumbudget_scaled, y = mean, colour = method, fill = method), 
   geom_stepribbon(aes(min = mean - se, max = mean + se), colour = NA, alpha = 0.3) +
   scale_colour_manual(values = values) +
   scale_fill_manual(values = values) +
-  labs(x = "% Budget Used", y = "Mean Normalized Regret", colour = "Optimizer", fill = "Optimizer") +
+  labs(x = "Fraction of Budget Used", y = "Mean Normalized Regret", colour = "Optimizer", fill = "Optimizer") +
   theme_minimal() +
   theme(legend.position = "bottom", legend.title = element_text(size = rel(0.75)), legend.text = element_text(size = rel(0.75)))
 ggsave("plots/anytime_average_mf.png", plot = g, device = "png", width = 6, height = 4)
@@ -101,7 +102,7 @@ g = ggplot(aes(x = cumbudget_scaled, y = mean, colour = method, fill = method), 
   geom_ribbon(aes(min = mean - se, max = mean + se), colour = NA, alpha = 0.3) +
   scale_colour_manual(values = values) +
   scale_fill_manual(values = values) +
-  labs(x = "% Budget Used", y = "Mean Rank", colour = "Optimizer", fill = "Optimizer") +
+  labs(x = "Fraction of Budget Used", y = "Mean Rank", colour = "Optimizer", fill = "Optimizer") +
   theme_minimal() +
   theme(legend.position = "bottom", legend.title = element_text(size = rel(0.75)), legend.text = element_text(size = rel(0.75)))
 ggsave("plots/anytime_average_rank_mf.png", plot = g, device = "png", width = 6, height = 4)
