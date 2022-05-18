@@ -86,8 +86,16 @@ library(scmamp)  # 0.3.2
 best_agg = agg[cumbudget_scaled == 0.25]
 best_agg[, problem := paste0(scenario, "_", instance, "_", targets)]
 tmp = - as.matrix(dcast(best_agg, problem ~ method, value.var = "mean_hvi")[, -1])
-friedmanTest(tmp) # 1: chi(6) 40.851, p < 0.001; 0.25: chi(6) 48.103, p < 0.001
+friedmanTest(tmp) # 0.25: chi(6) 48.103, p < 0.001
 png("plots/cd_025_mo.png", width = 6, height = 4, units = "in", res = 300, pointsize = 10)
+plotCD(tmp, cex = 1)
+dev.off()
+
+best_agg = agg[cumbudget_scaled == 1]
+best_agg[, problem := paste0(scenario, "_", instance, "_", targets)]
+tmp = - as.matrix(dcast(best_agg, problem ~ method, value.var = "mean_hvi")[, -1])
+friedmanTest(tmp) # 1: chi(6) 41.091,, p < 0.001
+png("plots/cd_1_mo.png", width = 6, height = 4, units = "in", res = 300, pointsize = 10)
 plotCD(tmp, cex = 1)
 dev.off()
 

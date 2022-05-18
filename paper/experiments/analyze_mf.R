@@ -39,12 +39,12 @@ ecdf_res =
   })
   })
 })
-ecdf_res[, problem := paste0(scenario, "_", instance)]
+ecdf_res[, problem := paste0(scenario, ":", instance)]
 ecdf_res[, method := factor(method, levels = c("random", "smac4hpo", "hb", "bohb", "dehb", "smac4mf", "optuna"), labels = c("Random", "SMAC", "HB", "BOHB", "DEHB", "SMAC-HB", "optuna"))]
 
 g = ggplot(aes(x = nr, y = ecdf, colour = method), data = ecdf_res) +
   geom_line() +
-  labs(x = "Missclassification Error", y = expression("P(X " >= " x)"), colour = "Optimizer") +
+  labs(x = "Missclassification Error", y = expression("P(X" >= "  x)"), colour = "Optimizer") +
   theme_minimal() +
   scale_colour_manual(values = values) +
   theme(legend.position = "bottom", legend.title = element_text(size = rel(0.75)), legend.text = element_text(size = rel(0.75))) +
@@ -111,8 +111,16 @@ library(scmamp)  # 0.3.2
 best_agg = agg_budget[cumbudget_scaled == 0.25]  # switch to 1 for final
 best_agg[, problem := paste0(scenario, "_", instance)]
 tmp = - as.matrix(dcast(best_agg, problem ~ method, value.var = "mean")[, -1])
-friedmanTest(tmp) # 1: chi(6) 83.72, p < 0.001; 0.25: chi(6) 63.41, p < 0.001
+friedmanTest(tmp) # 0.25: chi(6) 69.664, p < 0.001
 png("plots/cd_025_mf.png", width = 6, height = 4, units = "in", res = 300, pointsize = 10)
+plotCD(tmp, cex = 1)
+dev.off()
+
+best_agg = agg_budget[cumbudget_scaled == 1]  # switch to 1 for final
+best_agg[, problem := paste0(scenario, "_", instance)]
+tmp = - as.matrix(dcast(best_agg, problem ~ method, value.var = "mean")[, -1])
+friedmanTest(tmp) # 1: chi(6) 83.957, p < 0.001
+png("plots/cd_1_mf.png", width = 6, height = 4, units = "in", res = 300, pointsize = 10)
 plotCD(tmp, cex = 1)
 dev.off()
 
