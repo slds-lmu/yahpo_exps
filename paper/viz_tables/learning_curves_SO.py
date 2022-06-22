@@ -72,7 +72,7 @@ def plot_figure(axes, df, x):
     axes.ravel()[j].set_title(f'{x.scenario}:{x.instance}')
     # axes.ravel()[j].set_axis_off()
 
-    # plt.savefig(f"learning_curves_{x.scenario}_{x.instance}.png")
+    # plt.savefig(f"learning_curves_{x.scenario}_{x.instance}.pdf")
     # plt.show(block=False)
     # plt.close()
 
@@ -96,7 +96,7 @@ if __name__ == '__main__':
             plt.show(block=False)
 
     plt.tight_layout()
-    plt.savefig(f"learning_curves_all.png") 
+    plt.savefig(f"learning_curves_all.pdf") 
 
 
 

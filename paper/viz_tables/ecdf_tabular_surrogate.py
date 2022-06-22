@@ -117,5 +117,5 @@ if __name__ == '__main__':
         axes.ravel()[j].set_title(f'{rw.scenario}:{rw.instance}')
 
     plt.tight_layout()
-    plt.savefig(f"ecdf_tabular_surrogates.png") 
+    plt.savefig(f"ecdf_tabular_surrogates.pdf") 
     # plt.show(block=False)

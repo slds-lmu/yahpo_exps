@@ -1,6 +1,8 @@
 library(data.table)  # 1.14.2
 library(ggplot2)  # 3.3.5
 library(ggpubr)  # 0.4.0
+library(pammtools)  # 0.5.7
+library(mlr3misc)  # 0.10.0
 
 results_branin = readRDS("results/rts_results_branin.rds")
 results_currin = readRDS("results/rts_results_currin.rds")
@@ -21,8 +23,8 @@ plot_results = function(results, log = FALSE, instance, init) {
 
   if (log) {
   ggplot(aes(x = cumbudget, y = mean_normalized_regret, colour = optimizer, fill = optimizer), data = results) +
-    geom_line() +
-    geom_ribbon(aes(min = mean_normalized_regret - se_normalized_regret, max = mean_normalized_regret + se_normalized_regret), colour = NA, alpha = 0.3) +
+    geom_step() +
+    geom_stepribbon(aes(min = mean_normalized_regret - se_normalized_regret, max = mean_normalized_regret + se_normalized_regret), colour = NA, alpha = 0.3) +
     ylab("log Mean Normalized Regret") +
     xlab("Cumulative Budget") +
     labs(title = title, colour = guide_legend(title = "HPO Method"), fill = guide_legend(title = "HPO Method")) +
@@ -34,8 +36,8 @@ plot_results = function(results, log = FALSE, instance, init) {
     theme_minimal()
   } else {
   ggplot(aes(x = cumbudget, y = mean_normalized_regret, colour = optimizer, fill = optimizer), data = results) +
-    geom_line() +
-    geom_ribbon(aes(min = mean_normalized_regret - se_normalized_regret, max = mean_normalized_regret + se_normalized_regret), colour = NA, alpha = 0.3) +
+    geom_step() +
+    geom_stepribbon(aes(min = mean_normalized_regret - se_normalized_regret, max = mean_normalized_regret + se_normalized_regret), colour = NA, alpha = 0.3) +
     ylab("Mean Normalized Regret") +
     xlab("Cumulative Budget") +
     labs(title = title, colour = guide_legend(title = "HPO Method"), fill = guide_legend(title = "HPO Method")) +
@@ -97,8 +99,8 @@ plr2 = imap(list(Branin2D = results_rank_branin, Currin2D = results_rank_currin,
 })
 
 g1 = ggarrange(plotlist = c(plt1, plr1), nrow = 2, ncol = 2, common.legend = TRUE, legend = "bottom")
-ggsave("plots/tracesranks1.png", plot = g1, device = "png", width = 10, height = 6)
+ggsave("plots/tracesranks1.pdf", plot = g1, device = "pdf", width = 10, height = 6)
 
 g2 = ggarrange(plotlist = c(plt2, plr2), nrow = 2, ncol = 3, common.legend = TRUE, legend = "bottom")
-ggsave("plots/tracesranks2.png", plot = g2, device = "png", width = 15, height = 6)
+ggsave("plots/tracesranks2.pdf", plot = g2, device = "pdf", width = 15, height = 6)
 
